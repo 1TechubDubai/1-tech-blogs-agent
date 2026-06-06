@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI):
     # Configure your cron schedule here (Currently set to run every day at 2:00 AM)
     scheduler.add_job(
         scheduled_seo_task,
-        trigger=CronTrigger(hour=18, minute=52), 
+        trigger=CronTrigger(hour=9, minute=15), 
         id="daily_seo_loop",
         name="Daily Autonomous SEO Agent",
         replace_existing=True
