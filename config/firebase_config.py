@@ -1,7 +1,7 @@
 import logging
 import firebase_admin
 from firebase_admin import credentials, firestore
-from pydantic import json
+import json
 from config.settings import settings
 
 logger = logging.getLogger("seo_agent.config.firebase")
