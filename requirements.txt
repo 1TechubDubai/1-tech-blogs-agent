@@ -1,0 +1,71 @@
+# =========================
+# Core API Framework
+# =========================
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-dotenv
+
+# =========================
+# Firebase / Firestore
+# =========================
+firebase-admin
+google-cloud-firestore
+
+# =========================
+# Google Cloud / Google APIs
+# =========================
+google-auth
+google-auth-oauthlib
+google-api-python-client
+google-cloud-bigquery
+
+# Google Ads API
+google-ads
+
+# =========================
+# Gemini / Vertex AI
+# =========================
+google-generativeai
+google-cloud-aiplatform
+
+# =========================
+# HTTP / Async Operations
+# =========================
+httpx
+aiohttp
+
+# =========================
+# Data Processing / Utilities
+# =========================
+pandas
+numpy
+
+# =========================
+# HTML / Parsing / Content Processing
+# =========================
+beautifulsoup4
+lxml
+
+# =========================
+# Logging / Observability
+# =========================
+loguru
+
+# =========================
+# Security / Validation
+# =========================
+python-jose[cryptography]
+passlib[bcrypt]
+
+# =========================
+# Background Tasks / Scheduling
+# =========================
+apscheduler
+
+# =========================
+# Development / Testing
+# =========================
+pytest
+pytest-asyncio
