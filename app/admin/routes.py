@@ -1,13 +1,17 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Header, Depends
 from google.cloud import firestore
 from app.admin.schemas import AgentProfileSchema, SystemSettingsSchema, ApprovalActionSchema, BlogResponseSchema
+from app.agent.pipeline import run_autonomous_seo_loop
 from config.firebase_config import get_firestore_db # We will implement this config dependency next
 from config.settings import settings
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-from app.core.database import get_test_blogs
+from app.core.database import get_active_agent_profile, get_active_agent_profile, get_test_blogs
+import asyncio
 import logging
+from config.firebase_config import get_firestore_db
+
 
 logger = logging.getLogger("seo_agent.admin.routes")
 
@@ -1167,3 +1171,29 @@ async def get_dashboard_stats(db: firestore.Client = Depends(get_firestore_db)):
             "status": "error",
             "message": str(e)
         }
+    
+@router.post("/trigger-seo-pipeline")
+async def trigger_seo_pipeline(
+    authorization: str = Header(None),
+    db = Depends(get_firestore_db)
+):
+    """External endpoint for GitHub Actions to trigger the daily agent."""
+    
+    # 1. Security Check
+    expected_token = f"Bearer {settings.CRON_SECRET_KEY}"
+    if authorization != expected_token:
+        raise HTTPException(status_code=401, detail="Unauthorized cron trigger")
+    
+    # 2. EXACT MATCH TO YOUR OLD CRON JOB: Use the helper function!
+    profile = get_active_agent_profile(db)
+    
+    if not profile:
+        # If the helper returns None, it means the master switch is off or no profile exists
+        return {"status": "skipped", "message": "Autonomous mode disabled or no active profile found."}
+
+    # 3. Fire the pipeline! 
+    # (We keep asyncio.create_task so the API responds instantly to GitHub, 
+    # preventing timeout errors while the heavy loop runs in the background)
+    asyncio.create_task(run_autonomous_seo_loop(db, profile))
+    
+    return {"status": "success", "message": f"SEO Pipeline triggered for profile: {profile.get('profile_name', 'Unknown')}"}

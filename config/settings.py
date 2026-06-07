@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     
     # 🚀 NEW FOR RENDER: Accepts the entire JSON file as a text string
     GOOGLE_APPLICATION_CREDENTIALS_JSON: Optional[str] = None
+    CRON_SECRET_KEY: Optional[str] = None
     
     # Made optional so the Docker build phase doesn't crash if it's temporarily missing
     GCP_PROJECT_ID: Optional[str] = None

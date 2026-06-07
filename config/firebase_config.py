@@ -47,6 +47,7 @@ def get_firestore_db():
     # Failsafe initialization check
     if _db_client is None:
         initialize_firebase()
+        _db_client = firestore.client()
         
     try:
         yield _db_client

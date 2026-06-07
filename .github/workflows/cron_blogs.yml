@@ -1,0 +1,30 @@
+name: Daily SEO Agent Trigger
+
+on:
+  schedule:
+    # Runs at 03:45 UTC (09:15 IST) every day
+    - cron: '45 3 * * *'
+  workflow_dispatch: # Allows manual testing
+
+jobs:
+  trigger-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🌅 Step 1 - Wake up Render Web Service
+        run: |
+          echo "Knock knock! Waking up the Render server..."
+          curl -s -o /dev/null -w "%{http_code}" https://one-tech-blogs-agent.onrender.com/docs
+          
+      - name: ☕ Step 2 - Wait for Cold Start (3 Minutes)
+        run: |
+          echo "Waiting 180 seconds for Render container to fully boot..."
+          sleep 180
+          
+      - name: 🚀 Step 3 - Trigger SEO Pipeline
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET_KEY }}
+        run: |
+          echo "Server is awake. Triggering the Autonomous Agent..."
+          curl -X POST https://one-tech-blogs-agent.onrender.com/admin/trigger-seo-pipeline \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json"

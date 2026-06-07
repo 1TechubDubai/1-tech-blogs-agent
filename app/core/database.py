@@ -159,7 +159,7 @@ def is_weekly_quota_met(db: firestore.Client, profile: dict) -> bool:
     try:
         # Assuming your blogs are saved in a "blogs" collection. 
         # Update "blogs" if create_blog_document() uses a different collection name.
-        blogs_ref = db.collection("blogs")
+        blogs_ref = db.collection("blog_posts")
         
         # Query: Get blogs created in the last 7 days by this specific profile
         query = blogs_ref.where("created_at", ">=", seven_days_ago)
@@ -224,7 +224,7 @@ async def create_blog_document(db: firestore.Client, blog_data: Dict[str, Any]) 
             "updatedAt": current_time
         }
         
-        doc_ref = db.collection("blogs").document()
+        doc_ref = db.collection("blog_posts").document()
         doc_ref.set(prepared_data)
         logger.info(f"Successfully generated new document entry: ID {doc_ref.id} [Status: {prepared_data['status']}]")
         return doc_ref.id
@@ -286,7 +286,7 @@ def get_active_blog_urls(db: firestore.Client) -> List[Dict[str, Any]]:
     Used by the background monitoring worker to check performance drift via Search Console APIs.
     """
     try:
-        blogs_ref = db.collection("blogs")
+        blogs_ref = db.collection("blog_posts")
         query = blogs_ref.where("status", "==", "active")
         active_list = []
         
